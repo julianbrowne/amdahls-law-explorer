@@ -11,45 +11,56 @@ else {
 
         $("#amdahl").append(' \
             <style> \
-                label { \
-                    display: inline-block; \
-                    width: 240px; \
-                } \
-                input:disabled { \
-                    background: #EEEEEE; \
-                } \
                 #amdahl { \
                     font-family: courier; \
+                    margin: 10px 50px \
                 } \
-                .center { \
+                #amdahl label { \
+                    display: inline-block; \
+                    width: 240px; \
+                    margin: 10px; \
+                } \
+                #amdahl input:disabled { \
+                    background: #EEEEEE; \
+                } \
+                #amdahl .center { \
                     text-align: center; \
                 } \
-                table { \
+                #amdahl .heading { \
+                    font-weight: bold; \
+                    margin: 10px; \
+                } \
+                #amdahl table { \
                     border-collapse: collapse; \
                     border-spacing: 0px; \
                     border: none; \
+                    margin: 10px; \
                 } \
-                th { \
+                #amdahl th { \
                     vertical-align: top; \
                     margin: 0 5px; \
                     padding: 5px; \
                     border-right: 1px solid #DDDDDD; \
                     border-bottom: 1px solid #DDDDDD; \
                 } \
-                td { \
+                #amdahl td { \
                     text-align: center; \
                     margin: 0; \
                     padding: 5px; \
                     position:relative; \
                     border-right: 1px solid #DDDDDD; \
                 } \
-                .summary { \
+                #amdahl .summary { \
                     font-weight: bold; \
                     border-top: 1px solid #DDDDDD; \
                 } \
+                #amdahl p { \
+                    padding: 5px; \
+                    margin: 5px; \
+                } \
             </style> \
             <div id="process"> \
-                <b>Business Process</b><br/> \
+                <div class="heading">Business Process</div> \
                 <label for="steps">Steps in Process</label> \
                 <input type="text" name="steps" placeholder="steps" size="5" /> \
                 <input type="button" value=" -build- " onclick="Amdahl.stepsTable()" />  \
@@ -73,6 +84,7 @@ Amdahl.stepsTable = function() {
 
     $("#amdahl").append(' \
         <div id="steps"> \
+            <div class="heading">Steps</div> \
         </div> \
     ');
 
@@ -175,7 +187,7 @@ Amdahl.buildReport = function() {
 
     $("#amdahl").append(' \
         <div id="report"> \
-            <b>Report</b><br/> \
+            <div class="heading">Report</div> \
         </div> \
     ');
 
