@@ -13,22 +13,34 @@ else {
             <style> \
                 label { \
                     display: inline-block; \
-                    width: 150px; \
+                    width: 240px; \
                 } \
                 input:disabled { \
                     background: #EEEEEE; \
                 } \
+                #amdahl { \
+                    font-family: courier; \
+                } \
                 .center { \
                     text-align: center; \
                 } \
+                th { \
+                    vertical-align: top; \
+                    margin: 5px; \
+                    padding: 5px; \
+                    border-right: 1px solid #DDDDDD; \
+                } \
                 td { \
                     text-align: center; \
+                    margin: 5px; \
+                    padding: 5px; \
+                    border-right: 1px solid #DDDDDD; \
                 } \
             </style> \
             <div id="process"> \
                 <b>Business Process</b><br/> \
                 <label for="steps">Steps in Process</label> \
-                <input type="text" name="steps" placeholder="steps" size="3" /> \
+                <input type="text" name="steps" placeholder="steps" size="5" /> \
                 <input type="button" value=" -build- " onclick="Amdahl.stepsTable()" />  \
                 <input type="button" value=" -clear- " onclick="Amdahl.clearAll()" /><br/> \
             </div> \
@@ -185,10 +197,10 @@ Amdahl.buildReport = function() {
         "<tr> \
             <th>ID</th> \
             <th>Step Name</th> \
-            <th>Orig. Time (To)</th> \
-            <th>Orig % of Process Time (Po)</th> \
-            <th>Speed-Up Factor (F)</th> \
-            <th>Contribution (Po/F)</th> \
+            <th>Orig. Time<br/>(To)</th> \
+            <th>Orig % of Proc<br/>Time (Po)</th> \
+            <th>Speed-Up Factor<br/>(F)</th> \
+            <th>Contribution<br/>(Po/F)</th> \
             <th>New Time</th> \
         </tr>"
     );
