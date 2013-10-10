@@ -67,10 +67,17 @@ Amdahl.stepsTable = function() {
     var steps = inputSteps.val();
 
     if( steps === "" ) return;
-    if( $("#steps").length > 0 ) return;
+
+    if( $("#steps").length > 0 ) $("#steps").remove();
+    if( $("#report").length > 0 ) $("#report").remove();
+
+    $("#amdahl").append(' \
+        <div id="steps"> \
+        </div> \
+    ');
 
     if( isNaN(steps) ) { 
-        alert("steps must be a number");
+        $("#steps").append("<p>Steps in process must be a number</p>");
         return;
     }
 
@@ -79,10 +86,6 @@ Amdahl.stepsTable = function() {
         inputSteps.val(10)
     };
 
-    $("#amdahl").append(' \
-        <div id="steps"> \
-        </div> \
-    ');
 
     $("#steps").append(" \
         <p>Now, for each step in the process (A, B, C..) \
