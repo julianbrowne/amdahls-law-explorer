@@ -24,17 +24,28 @@ else {
                 .center { \
                     text-align: center; \
                 } \
+                table { \
+                    border-collapse: collapse; \
+                    border-spacing: 0px; \
+                    border: none; \
+                } \
                 th { \
                     vertical-align: top; \
-                    margin: 5px; \
+                    margin: 0 5px; \
                     padding: 5px; \
                     border-right: 1px solid #DDDDDD; \
+                    border-bottom: 1px solid #DDDDDD; \
                 } \
                 td { \
                     text-align: center; \
-                    margin: 5px; \
+                    margin: 0; \
                     padding: 5px; \
+                    position:relative; \
                     border-right: 1px solid #DDDDDD; \
+                } \
+                .summary { \
+                    font-weight: bold; \
+                    border-top: 1px solid #DDDDDD; \
                 } \
             </style> \
             <div id="process"> \
@@ -118,16 +129,16 @@ Amdahl.processTable = function(div, rows) {
                 + '<td>'
                     + (i+1) + '</td>'
                 + '<td>'
-                    + '<input class="center" type="text" size="30" name="step_name[]" value="Step ' + unescape('%' + (i+65).toString(16)) + '" disabled>'
+                    + '<input class="center" type="text" size="20" name="step_name[]" value="Step ' + unescape('%' + (i+65).toString(16)) + '" disabled>'
                 + '</td>'
                 + '<td>'
-                    + '<input class="center" type="text" size="5" name="step_time[]" value="' + defaultTime + '" onchange="Amdahl.updateTotal()">'
+                    + '<input class="center" type="text" size="10" name="step_time[]" value="' + defaultTime + '" onchange="Amdahl.updateTotal()">'
                 + '</td>'
                 + '<td>'
-                    + '<input class="center" type="text" size="5" name="step_perc[]" value="' + defaultPerc + '" disabled>'
+                    + '<input class="center" type="text" size="10" name="step_perc[]" value="' + defaultPerc + '" disabled>'
                 + '</td>'
                 + '<td>'
-                    + '<input class="center" type="text" size="5" name="step_fact[]" value="' + defaultFact + '">'
+                    + '<input class="center" type="text" size="10" name="step_fact[]" value="' + defaultFact + '">'
                 + '</td>'
             + '</tr>'
         );
@@ -135,45 +146,26 @@ Amdahl.processTable = function(div, rows) {
 
     $("#process-data").append(
         '<tr>'
-            + '<td>&nbsp;</td>'
-            + '<td>Totals (Now)</td>'
-            + '<td>'
-                + '<input class="center" type="text" name="total_time" value="' + (rows * defaultTime) + '" disabled>'
+            + '<td class="summary">&nbsp;</td>'
+            + '<td class="summary">Totals (Now)</td>'
+            + '<td class="summary">'
+                + '<input class="center" type="text" size="10" name="total_time" value="' + (rows * defaultTime) + '" disabled>'
             + '</td>'
-            + '<td>'
-                + '<input class="center" type="text" value="100%" disabled>'
+            + '<td class="summary">'
+                + '<input class="center" type="text" size="10" value="100%" disabled>'
             + '</td>'
-            + '<td>&nbsp;</td>'
+            + '<td class="summary">'
+                + '<input type="submit" value=" -report- " onclick="Amdahl.buildReport()">'
+            + '</td>'
         + '</tr>'
     );
 
-    $("#process-data").append(
-        '<tr>'
-            + '<td>&nbsp;</td>'
-            + '<td>&nbsp;</td>'
-            + '<td>&nbsp;</td>'
-            + '<td>&nbsp;</td>'
-            + '<td><input type="submit" value=" -report- " onclick="Amdahl.buildReport()"></td>'
-        + '</tr>'
-    );
 };
 
 Amdahl.buildReport = function() { 
 
     var speedups = document.getElementsByName("step_fact[]");
     var changes = false;
-
-    for(i=0; i < speedups.length; i++) { 
-        if(speedups[i].value != "1") { 
-            changes = true;
-            break;
-        }
-    }
-
-    if(!changes) { 
-        alert("All your speedup factors are set to 1.\n\nYour new elapsed process time will be the same!")
-        return false;
-    }
 
     if( $("#report").length > 0 )
         $("#report").remove();
@@ -184,12 +176,41 @@ Amdahl.buildReport = function() {
         </div> \
     ');
 
-    var oldProcTime = parseInt($("input:text[name=total_time]").val());
+    for(i=0; i < speedups.length; i++) { 
+        if(speedups[i].value != "1") { 
+            changes = true;
+            break;
+        }
+    }
+
+    if(!changes) { 
+        $("#report").append(
+              "<p>All your speedup factors are set to 1</p>"
+            + "<p>Your new elapsed process time will be the same</p>"
+            + "<p>Try changing some of the factors in the table to values other than 1</p>"
+        );
+        return false;
+    }
 
     var stepNames = document.getElementsByName("step_name[]");
     var stepTimes = document.getElementsByName("step_time[]");
     var stepFacts = document.getElementsByName("step_fact[]");
     var stepPercs = document.getElementsByName("step_perc[]");
+
+    // pre-calculate some totals
+
+    var totalFactor = 0;
+    var contributions = [];
+    var stepPercentages = [];
+    var stepFactors = [];
+    var oldElapsed = parseInt($("input:text[name=total_time]").val()).toFixed(3);
+    for(var i=0; i < stepTimes.length; i++) { 
+        stepPercentages[i] = (parseFloat(stepPercs[i].value) / 100).toFixed(3);
+        stepFactors[i]     = (parseFloat(stepFacts[i].value)).toFixed(3);
+        contributions[i] = (stepPercentages[i] / stepFactors[i]).toFixed(3);
+        totalFactor += parseFloat(contributions[i]);
+    }
+    var newElapsed = (totalFactor * oldElapsed).toFixed(3)
 
     $("#report").append('<table id="report-data">');
 
@@ -197,59 +218,56 @@ Amdahl.buildReport = function() {
         "<tr> \
             <th>ID</th> \
             <th>Step Name</th> \
-            <th>Orig. Time<br/>(To)</th> \
-            <th>Orig % of Proc<br/>Time (Po)</th> \
-            <th>Speed-Up Factor<br/>(F)</th> \
-            <th>Contribution<br/>(Po/F)</th> \
-            <th>New Time</th> \
+            <th>Original Time<br/>[T<sub>1</sub>]</th> \
+            <th>Original % of Process Time<br/>[P<sub>1</sub>]</th> \
+            <th>Speed-Up Factor<br/>[F]</th> \
+            <th>Contribution<br/>[P<sub>1</sub>/F]</th> \
+            <th>New Time<br/>[T<sub>2</sub>]</th> \
+            <th>New % of Process Time<br/>[P<sub>2</sub>]</th> \
         </tr>"
     );
 
-    var totalFactor = 0;
-
     for(var i=0; i < stepTimes.length; i++) { 
-        var stepPercentage = (parseFloat(stepPercs[i].value) / 100).toFixed(3);
-        var stepFactor     = (parseFloat(stepFacts[i].value)).toFixed(3);
-        var stepElapsed    = (parseFloat(stepTimes[i].value)).toFixed(3);
-
-        var contribution = (stepPercentage / stepFactor).toFixed(3);
-        var newtime = (stepElapsed * (1/stepFactor) ).toFixed(3);
-        totalFactor += parseFloat(contribution);
+        var stepElapsed = (parseFloat(stepTimes[i].value)).toFixed(3);
+        var newTime = (stepElapsed * (1/stepFactors[i]) ).toFixed(3);
+        var newPerc = (newTime / newElapsed).toFixed(3);
 
         $("#report-data").append( 
             '<tr>'
                 + '<td>' + (i+1) + '</td>'
                 + '<td>' + stepNames[i].value + '</td>'
                 + '<td>' + stepElapsed + '</td>'
-                + '<td>' + stepPercentage + '</td>'
-                + '<td>' + stepFactor + '</td>'
-                + '<td>' + contribution + '</td>'
-                + '<td>' + newtime + '</td>'
+                + '<td>' + stepPercentages[i] + '</td>'
+                + '<td>' + stepFactors[i] + '</td>'
+                + '<td>' + contributions[i] + '</td>'
+                + '<td>' + newTime + '</td>'
+                + '<td>' + newPerc + '</td>'
             + '</tr>'
         );
     }
 
     $("#report-data").append( 
         '<tr>'
-            + '<td>&nbsp;</td>'
-            + '<td>&nbsp;</td>'
-            + '<td>&nbsp;</td>'
-            + '<td>&nbsp;</td>'
-            + '<td>&nbsp;</td>'
-            + '<td>' + totalFactor.toFixed(3) + '</td>'
-            + '<td>&nbsp;</td>'
+            + '<td class="summary">&nbsp;</td>'
+            + '<td class="summary">&nbsp;</td>'
+            + '<td class="summary">' + oldElapsed + '</td>'
+            + '<td class="summary">&nbsp;</td>'
+            + '<td class="summary">&nbsp;</td>'
+            + '<td class="summary">' + totalFactor.toFixed(3) + '</td>'
+            + '<td class="summary">' + newElapsed + '</td>'
+            + '<td class="summary">&nbsp;</td>'
         + '</tr>'
     );
 
     $("#report").append(
           "<p>Before the changes the process completed in "
-        + oldProcTime.toFixed(3)
+        + oldElapsed
         + " minutes. </p>"
     );
 
     $("#report").append(
           "<p>The process will now complete in " 
-        + (totalFactor * oldProcTime).toFixed(3)
+        + newElapsed
         + " minutes (total new factor * old elapsed time). "
     );
 };
