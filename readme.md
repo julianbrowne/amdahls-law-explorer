@@ -6,3 +6,5 @@ Source code and test html page for the Amdahl's Law Calculator from the [blog po
 Or just [try it out](http://julianbrowne.github.io/amdahls-law/) in your browser.
 
 (uses jQuery 2.x so no support for IE 6,7,8)
+
+![screenshot](img/screenshot.jpg)
