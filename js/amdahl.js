@@ -1,9 +1,10 @@
 
 var Amdahl = (function($) { 
 
-    var maxSteps = 15;
-    var defaultStepTime = 5;
-    var defaultFactor = 1;
+    var maxSteps = 15;              // max steps in a business process
+    var defaultStepTime = 5;        // default elapsed time for a process step
+    var defaultFactor = 1;          // default speed-up factor for a step
+
     var businessProcessDescriptionSelector = "#business-process-description";
     var instructionsContainer = "#instructions-container";
     var businessProcessStepsContainer = "#business-process-steps-container";
@@ -26,24 +27,7 @@ var Amdahl = (function($) {
         $(businessProcessReportContainer).hide();
     }
 
-    function buildTextInput(name, value, disabled, onchange) { 
-        var inp = $("<input>")
-            .attr("type", "text")
-            .attr("value", value)
-            .attr("name", name);
-
-        if(disabled!==undefined && disabled!==false) { 
-            inp.prop("readonly", true);
-        }
-
-        if(onchange!== undefined) { 
-            inp.on("change", function(e) { onchange(); });
-        }
-
-        return inp;
-    }
-
-    function buildStepsTable() { 
+    function buildProcessStepsTable() { 
 
         var stepsInput = $("#steps-in-process")
         var numberOfSteps = stepsInput.val();
@@ -58,51 +42,41 @@ var Amdahl = (function($) {
 
         clearResults();
 
-        buildProcessStepsTable(numberOfSteps);
-    }
-
-    function buildProcessStepsTable(rows) { 
-
         $(businessProcessStepsContainer).show();
-        $(instructionsContainer).append($("<p>").html(instructions));
+        $(instructionsContainer).append(html.para(instructions));
 
         var target = $(businessProcessStepsBody);
 
-        if(rows === undefined) return;
-
-        var table = $("<table>")
-            .addClass("table")
-            //.addClass("table-striped")
-            .attr("id", "process-data");
+        var table = html.table("process-data");
 
         target.append(table);
 
-        var tableHeaderRow = $("<tr>");
-        tableHeaderRow.append($("<th>").html("ID"));
-        tableHeaderRow.append($("<th>").html("Step Name"));
-        tableHeaderRow.append($("<th>").html("Step Time (mins)"));
-        tableHeaderRow.append($("<th>").html("% of Process Time"));
-        tableHeaderRow.append($("<th>").html("Speed-Up Factor"));
+        var tableHeaderRow = html.tr();
+        tableHeaderRow.append(html.th("ID"));
+        tableHeaderRow.append(html.th("Step Name"));
+        tableHeaderRow.append(html.th("Step Time (mins)"));
+        tableHeaderRow.append(html.th("% of Process Time"));
+        tableHeaderRow.append(html.th("Speed-Up Factor"));
 
         table.append(tableHeaderRow);
 
-        var defaultPerc = ((defaultStepTime / (defaultStepTime * rows)) * 100).toFixed(2);
+        var defaultPerc = ((defaultStepTime / (defaultStepTime * numberOfSteps)) * 100).toFixed(2);
 
-        for(var i=0; i < rows; i++) { 
-            var tableDataRow = $("<tr>");
-            tableDataRow.append($("<td>").html((i+1)));
-            tableDataRow.append($("<td>").html(buildTextInput("step_name[]","Step " + unescape('%' + (i+65).toString(16)))));
-            tableDataRow.append($("<td>").html(buildTextInput("step_time[]", defaultStepTime, false, updateTotal)));
-            tableDataRow.append($("<td>").html(buildTextInput("step_perc[]", defaultPerc, true)));
-            tableDataRow.append($("<td>").html(buildTextInput("step_fact[]", defaultFactor)));
+        for(var i=0; i < numberOfSteps; i++) { 
+            var tableDataRow = html.tr();
+            tableDataRow.append(html.td(i+1));
+            tableDataRow.append(html.td(html.textInput("step_name[]","Step " + unescape('%' + (i+65).toString(16)))));
+            tableDataRow.append(html.td(html.textInput("step_time[]", defaultStepTime, false, updateTotal)));
+            tableDataRow.append(html.td(html.textInput("step_perc[]", defaultPerc, true)));
+            tableDataRow.append(html.td(html.textInput("step_fact[]", defaultFactor)));
             table.append(tableDataRow);
         }
 
-        var tableSummaryRow = $("<tr>");
-        tableSummaryRow.append($("<td>").html("&nbsp;"));
-        tableSummaryRow.append($("<td>").html("Totals (Now)"));
-        tableSummaryRow.append($("<td>").html(buildTextInput("total_time", (rows * defaultStepTime), true)));
-        tableSummaryRow.append($("<td>").html(buildTextInput("total_total", "100%", true)));
+        var tableSummaryRow = html.tr();
+        tableSummaryRow.append(html.td("&nbsp;"));
+        tableSummaryRow.append(html.td("Totals (Now)"));
+        tableSummaryRow.append(html.td(html.textInput("total_time", (numberOfSteps * defaultStepTime), true)));
+        tableSummaryRow.append(html.td(html.textInput("total_total", "100%", true)));
 
         var reportButton = $("<button>")
             .html("report")
@@ -110,7 +84,7 @@ var Amdahl = (function($) {
             .addClass("btn-primary")
             .on("click", buildReport);
 
-        tableSummaryRow.append($("<td>").html(reportButton));
+        tableSummaryRow.append(html.td(reportButton));
         table.append(tableSummaryRow);
 
     }
@@ -131,10 +105,10 @@ var Amdahl = (function($) {
         }
 
         if(!changes) { 
-            $(businessProcessReportBody).append(
-                  "<p>All your speedup factors are set to 1</p>"
-                + "<p>Your new elapsed process time will be the same</p>"
-                + "<p>Try changing some of the factors in the table to values other than 1</p>"
+            $(businessProcessReportBody).append( 
+                  html.para("All your speedup factors are set to 1")
+                + html.para("Your new elapsed process time will be the same")
+                + html.para("Try changing some of the factors in the table to values other than 1")
             );
             return false;
         }
@@ -159,63 +133,57 @@ var Amdahl = (function($) {
         }
         var newElapsed = (totalFactor * oldElapsed).toFixed(3)
 
-        $(businessProcessReportBody).append('<table id="report-data" class="table">');
+        $(businessProcessReportBody).append(html.table("report-data"));
 
-        $("#report-data").append(
-            "<tr> \
-                <th>ID</th> \
-                <th>Step Name</th> \
-                <th>Original Time<br/>[T<sub>1</sub>]</th> \
-                <th>Original % of Process Time<br/>[P<sub>1</sub>]</th> \
-                <th>Speed-Up Factor<br/>[F]</th> \
-                <th>Contribution<br/>[P<sub>1</sub>/F]</th> \
-                <th>New Time<br/>[T<sub>2</sub>]</th> \
-                <th>New % of Process Time<br/>[P<sub>2</sub>]</th> \
-            </tr>"
-        );
+        var reportHeaderRow = html.tr();
+        reportHeaderRow.append(html.th("ID"));
+        reportHeaderRow.append(html.th("Step Name"));
+        reportHeaderRow.append(html.th("Original Time<br/>[T<sub>1</sub>]"));
+        reportHeaderRow.append(html.th("Original % of<br/> Process Time[P<sub>1</sub>]</th>"));
+        reportHeaderRow.append(html.th("Speed-Up Factor<br/>[F]"));
+        reportHeaderRow.append(html.th("Contribution<br/>[P<sub>1</sub>/F]"));
+        reportHeaderRow.append(html.th("New Time<br/>[T<sub>2</sub>]"));
+        reportHeaderRow.append(html.th("New % of Process Time<br/>[P<sub>2</sub>]"));
+
+        $("#report-data").append(reportHeaderRow);
 
         for(var i=0; i < stepTimes.length; i++) { 
+
             var stepElapsed = (parseFloat(stepTimes[i].value)).toFixed(3);
             var newTime = (stepElapsed * (1/stepFactors[i]) ).toFixed(3);
             var newPerc = (newTime / newElapsed).toFixed(3);
 
-            $("#report-data").append( 
-                '<tr>'
-                    + '<td>' + (i+1) + '</td>'
-                    + '<td>' + stepNames[i].value + '</td>'
-                    + '<td>' + stepElapsed + '</td>'
-                    + '<td>' + stepPercentages[i] + '</td>'
-                    + '<td>' + stepFactors[i] + '</td>'
-                    + '<td>' + contributions[i] + '</td>'
-                    + '<td>' + newTime + '</td>'
-                    + '<td>' + newPerc + '</td>'
-                + '</tr>'
-            );
+            var reportDataRow = html.tr();
+            reportDataRow.append(html.td(i+1));
+            reportDataRow.append(html.td(stepNames[i].value));
+            reportDataRow.append(html.td(stepElapsed));
+            reportDataRow.append(html.td(stepPercentages[i]));
+            reportDataRow.append(html.td(stepFactors[i]));
+            reportDataRow.append(html.td(contributions[i]));
+            reportDataRow.append(html.td(newTime));
+            reportDataRow.append(html.td(newPerc));
+
+            $("#report-data").append(reportDataRow);
         }
 
-        $("#report-data").append( 
-            '<tr>'
-                + '<td class="summary">&nbsp;</td>'
-                + '<td class="summary">&nbsp;</td>'
-                + '<td class="summary">' + oldElapsed + '</td>'
-                + '<td class="summary">&nbsp;</td>'
-                + '<td class="summary">&nbsp;</td>'
-                + '<td class="summary">' + totalFactor.toFixed(3) + '</td>'
-                + '<td class="summary">' + newElapsed + '</td>'
-                + '<td class="summary">&nbsp;</td>'
-            + '</tr>'
+        var reportSummaryRow = html.tr();
+        reportSummaryRow.append(html.td("&nbsp;"));
+        reportSummaryRow.append(html.td("&nbsp;"));
+        reportSummaryRow.append(html.td(oldElapsed));
+        reportSummaryRow.append(html.td("&nbsp;"));
+        reportSummaryRow.append(html.td("&nbsp;"));
+        reportSummaryRow.append(html.td(totalFactor.toFixed(3)));
+        reportSummaryRow.append(html.td(newElapsed));
+        reportSummaryRow.append(html.td("&nbsp;"));
+
+        $("#report-data").append(reportSummaryRow);
+
+        $(businessProcessReportBody).append( 
+            html.para("Before the changes the process completed in " + oldElapsed + " minutes")
         );
 
-        $(businessProcessReportBody).append(
-              "<p>Before the changes the process completed in "
-            + oldElapsed
-            + " minutes. </p>"
-        );
-
-        $(businessProcessReportBody).append(
-              "<p>The process will now complete in " 
-            + newElapsed
-            + " minutes (total new factor * old elapsed time). "
+        $(businessProcessReportBody).append( 
+            html.para("The process will now complete in " + newElapsed + " minutes (total new factor * old elapsed time)")
         );
     }
 
@@ -240,6 +208,55 @@ var Amdahl = (function($) {
 
     }
 
+    var html = { 
+
+        para: function(text) { 
+            var p = $("<p>");
+            if(text!==undefined) { p.html(text); }
+            return p;
+        },
+
+        table: function(id) { 
+            var t = $("<table>").addClass("table");
+            if(id!==undefined) { t.attr("id", id); }
+            return t;
+        },
+
+        tr: function() { 
+            return $("<tr>");
+        },
+
+        th: function(text) { 
+            var th = $("<th>");
+            if(text!==undefined) { th.html(text); }
+            return th;
+        },
+
+        td: function(text) { 
+            var td = $("<td>");
+            if(text!==undefined) { td.html(text); }
+            return td;
+        },
+
+        textInput: function (name, value, disabled, onchange) { 
+            var inp = $("<input>")
+                .attr("type", "text")
+                .attr("value", value)
+                .attr("name", name);
+
+            if(disabled!==undefined && disabled!==false) { 
+                inp.prop("readonly", true);
+            }
+
+            if(onchange!== undefined) { 
+                inp.on("change", function(e) { onchange(); });
+            }
+
+            return inp;
+        }
+
+    }
+
     return { 
 
         init: function() { 
@@ -247,7 +264,7 @@ var Amdahl = (function($) {
             $(businessProcessReportContainer).hide();
             $("#buildTable").on("click", function(e) { 
                 e.preventDefault(); 
-                buildStepsTable();
+                buildProcessStepsTable();
             });
             $("#clear").on("click", function(e) { 
                 e.preventDefault(); 
