@@ -1,0 +1,67 @@
+<html>
+<head>
+    <title>Amdahl Test</title>
+    <script src="lib/jquery/jquery-2.1.4.js"></script>
+    <script src="lib/bootstrap/js/bootstrap.js"></script>
+    <script src="js/amdahl.js"></script>
+    <link rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" media="all" href="css/style.css">
+</head>
+<body class="container">
+    <div class="row">
+        <div class="page-header col-md-12">
+            <h2><span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span>&nbsp;Amdahl Explorer</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="process" class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Business Process</h3>
+                </div>
+                <div id="business-process-description" class="panel-body">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label for="steps">Steps in Process</label>
+                            <input id="steps-in-process" class="form-control" type="text" name="steps" placeholder="steps">
+                            <button id="buildTable" class="btn btn-primary">build</button>
+                            <button id="clear" class="btn btn-warning">clear</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="instructions-container"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="business-process-steps-container" class="panel panel-success">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Process Steps</h3>
+                </div>
+                <div id="business-process-steps" class="panel-body"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="business-process-report-container" class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Process Report</h3>
+                </div>
+                <div id="business-process-report" class="panel-body"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function() { 
+            Amdahl.init(); 
+        });
+    </script>
+</body>
+</html>
