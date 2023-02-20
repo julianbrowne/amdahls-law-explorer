@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Amdahl Explorer</title>
+    <script src="../dist/amdahl-explorer.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span>
+            &nbsp;Amdahl Explorer
+        </h1>
+        <p>
+            <button
+                type="button"
+                class="btn btn-primary"
+                onclick="AmdahlExplorer.start('#explorer-contents')">
+                Go
+            </button>
+        </p>
+        <div id="explorer-contents"></div>
+    </div><!-- /.container -->
+</body>
+</html>
