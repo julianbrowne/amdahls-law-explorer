@@ -3,9 +3,9 @@
 
 Source code and test html page for the Amdahl's Law Calculator from the [blog post](https://www.julianbrowne.com/article/amdahls-law/) of the same name.
 
-Or just [try it out](http://julianbrowne.github.io/amdahls-law/) in your browser.
+Or just [try it out](http://julianbrowne.github.io/amdahls-law/test) in your browser.
 
-![screenshot](img/screenshot.jpg)
+![screenshot](screenshot.png)
 
 ## Installation
 
@@ -24,4 +24,3 @@ Or just [try it out](http://julianbrowne.github.io/amdahls-law/) in your browser
 ## Test then Build
 
 `npm run jfdi`
-
