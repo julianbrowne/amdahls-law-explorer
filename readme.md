@@ -9,7 +9,7 @@ Or just [try it out](http://julianbrowne.github.io/amdahls-law/test) in your bro
 
 ## Installation
 
-`git clone https://github.com/julianbrowne/amdahls-law`
+`git clone https://github.com/julianbrowne/amdahls-law-explorer`
 
 `npm install`
 
