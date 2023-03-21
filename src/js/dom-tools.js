@@ -216,14 +216,14 @@ function DomTools(parentElementSelector) {
 
             row.append($("<td>")
             	.html($("<input>")
-            	.addClass("form-control")
-            	.attr("type", "text")
-            	.attr("value", amdahlData[i].name)
-            	.data("step", i)
-            	.attr("name", "step-name-"+parseInt(i+1))
-            	.prop("readonly", false)
-            	.prop("disabled", false)
-            	.change({type: "name"}, updateCallback)));
+	            	.addClass("form-control")
+	            	.attr("type", "text")
+	            	.attr("value", amdahlData[i].name)
+	            	.data("step", i)
+	            	.attr("name", "step-name-"+parseInt(i+1))
+	            	.prop("readonly", false)
+	            	.prop("disabled", false)
+	            	.change({type: "name"}, updateCallback)));
 
             row.append($("<td>")
             	.html($("<input>")
