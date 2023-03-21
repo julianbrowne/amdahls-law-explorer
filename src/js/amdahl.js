@@ -41,7 +41,6 @@ function Amdahl(steps) {
 
 	this.updateSingleStepTimeData = function(step, newTime) { 
 		if(this.steps < 1 || step > this.steps) return;
-		//console.log("updating step " + step + " time from " + this.stepTimes[step] + " to " + newTime);
 		this.stepTimes[step] = parseFloat(newTime);
 		this.calculateProcessTotalTime();
 		this.calculateStepPercentages();
@@ -50,14 +49,12 @@ function Amdahl(steps) {
 
 	this.updateSingleStepFactorData = function(step, newFactor) { 
 		if(this.steps < 1 || step > this.steps) return;
-		//console.log("updating step " + step + " factor from " + this.factors[step] + " to " + newFactor);
 		this.factors[step] = parseFloat(newFactor);
 		return this.getStepData();
 	};
 
 	this.updateSingleStepNameData = function(step, newName) { 
 		if(this.steps < 1 || step > this.steps) return;
-		//console.log("updating step " + step + " name from " + this.stepNames[step] + " to " + newName);
 		this.stepNames[step] = newName;
 		return this.getStepData();
 	};

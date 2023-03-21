@@ -1,7 +1,9 @@
 
+/* eslint-disable no-unused-vars */
 import "../scss/styles.scss";
 import * as bootstrap from "bootstrap";
 import "../css/style.css";
+/* eslint-enable no-unused-vars */
 
 import {Amdahl} from "./amdahl";
 import {DomTools} from "./dom-tools";
